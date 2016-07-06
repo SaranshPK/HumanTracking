@@ -115,20 +115,10 @@
                 }
                 
                 for(var i = 0; i<importantIndexes.length;i++){
-                    var borderIndex = borderIndexes[i]
-
-                    data[borderIndex-4] = 0;
-                    data[borderIndex+1-4] = 0;
-                    data[borderIndex+2-4] = 0;
-
+                    var borderIndex = borderIndexes[i];
                     data[borderIndex] = 0;
                     data[borderIndex+1] = 0;
                     data[borderIndex+2] = 0;
-
-
-                    data[borderIndex+4] = 0;
-                    data[borderIndex+1+4] = 0;
-                    data[borderIndex+2+4] = 0;
                 } 
                 filled = [];
                 blobIDs = [];
@@ -198,7 +188,7 @@
                     }
                 }
                 ctx.putImageData(imageData, 0, 0);
-                for(var i = 0;i<blobs.length;i++){
+                for(var i = 0;i<blobs.length;i++){  //9704180/
                     blobs[i].fresh = false;
                     ctx.fillStyle = "rgb("+blobs[i].Red+","+blobs[i].Green+","+blobs[i].Blue+")";
                     ctx.fillText("Blob:" + blobs[i].blobSize,10,i*10+10,canvas.width);
