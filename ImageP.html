@@ -59,6 +59,7 @@
                 this.yValue = yValue;
                 this.midPointColor = null;
                 this.blobID = blobID;
+                this.fresh = true;
             }
             var renderID;
             image.onload = function() {
@@ -169,28 +170,33 @@
                                     minIndex = j;
                                 }
                             }
-                            if(minDist<100&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)>=0){
+                            if(minDist<400&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)==-1&&blobs[minIndex].fresh == false){
                                 blobs[minIndex].xValue = xVals+xMid;
                                 blobs[minIndex].yValue = yVals+yMid;
                                 blobs[minIndex].blobSize = currentSize;
                                 blobIDs.push(blobs[minIndex].blobID);
                             }
-                            for(var j = 0;j<blobs.length;j++){
-                                if(blobIDs.indexOf(blobs[j].blobID)==-1){
-                                    blobs.splice(j,1);
-                                    j--;
-                                }
+                            else{
+                                var UUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                                    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                                    return v.toString(16);
+                                });
+                                blobs.push(new blob(currentSize,R,G,B,xVals+xMid,yVals+yMid,UUID));
+                                blobIDs.push(UUID);
                             }
-                            var UUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                                return v.toString(16);
-                            });
-                            blobs.push(new blob(currentSize,R,G,B,xVals+xMid,yVals+yMid,UUID));
+                            
                         }
+                    }
+                }
+                for(var j = 0;j<blobs.length;j++){
+                    if(blobIDs.indexOf(blobs[j].blobID)==-1){
+                        blobs.splice(j,1);
+                        j--;
                     }
                 }
                 ctx.putImageData(imageData, 0, 0);
                 for(var i = 0;i<blobs.length;i++){
+                    blobs[i].fresh = false;
                     ctx.fillStyle = "rgb("+blobs[i].Red+","+blobs[i].Green+","+blobs[i].Blue+")";
                     ctx.fillText("Blob:" + blobs[i].blobSize,10,i*10+10,canvas.width);
                     ctx.beginPath();
