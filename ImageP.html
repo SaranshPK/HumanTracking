@@ -11,10 +11,14 @@
             <option value="thermal3.jpg">Greyscale</option>
             <option value="thermal4.jpg">Many People</option>
         </select>
+        <video id="video" autoplay="true" controls="false" hidden="true">
+            <source src="videoplayback.mp4">
+        </video>
         <br>
         <canvas id="ThermImg"></canvas> 
         
-        <script>    
+        <script>
+            
             var canvas = document.getElementById("ThermImg");
             var image = new Image();
             image.src = "thermal.jpg";
@@ -44,14 +48,19 @@
             var currentSize;
             var blobs = [];
             var filled = [];
-            function blob(blobSize,Red,Green,Blue,xValue,yValue){
+            var blobIDs = [];
+            
+            function blob(blobSize,Red,Green,Blue,xValue,yValue,blobID){
                 this.blobSize = blobSize;
                 this.Red = Red;
                 this.Green = Green;
                 this.Blue = Blue;
                 this.xValue = xValue;
                 this.yValue = yValue;
+                this.midPointColor = null;
+                this.blobID = blobID;
             }
+            var renderID;
             image.onload = function() {
                 canvas.width = image.width;
                 canvas.height = image.height;
@@ -59,12 +68,17 @@
                 ctx.drawImage(image, 0, 0);
                 imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
                 document.getElementById("valuePicker").value = 600;
+                renderID = setInterval(capture,100);
             };
+            function capture()
+            {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                analyze();
+            }
             function newImage(){
                 image.src = imagePicker.value;
             }
             function analyze(){
-                ctx.drawImage(image, 0, 0);
                 imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
                 data = imageData.data;
                 importantIndexes = [];
@@ -94,9 +108,6 @@
                         }
                     }
                 }
-                ctx.drawImage(image, 0, 0);
-                imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-                data = imageData.data;
                 
                 for(var i = 0; i<importantIndexes.length;i++){
                     var borderIndex = borderIndexes[i]
@@ -113,9 +124,9 @@
                     data[borderIndex+4] = 0;
                     data[borderIndex+1+4] = 0;
                     data[borderIndex+2+4] = 0;
-                }
-                blobs = []; 
+                } 
                 filled = [];
+                blobIDs = [];
                 for(var i = 0; i<importantIndexes.length;i++){
                     if((data[importantIndexes[i]]==0&&data[importantIndexes[i]+1]==0&&data[importantIndexes[i]+2]==0)||
                         (filled.indexOf(importantIndexes[i])>=0)){
@@ -143,8 +154,38 @@
                         var yVals = Math.floor(importantIndexes[i]/(canvas.width*4));
                         var xValsTemp = importantIndexes[i]%(canvas.width*4);
                         var xVals = Math.floor(xValsTemp/4);
+                        var distances = [];
+                        var minDist = 1000;
+                        var minIndex = -1;
                         if(currentSize > 100){
-                            blobs.push(new blob(currentSize,R,G,B,xVals+xMid,yVals+yMid));
+                            for(var j = 0;j<blobs.length;j++){
+                                var xDist = Math.pow(blobs[j].xValue-(xVals+xMid),2);
+                                var yDist = Math.pow(blobs[j].yValue-(yVals+yMid),2);
+                                distances.push(Math.sqrt(xDist+yDist));
+                            }
+                            for(var j = 0;j<distances.length;j++){
+                                if(distances[j]<minDist){
+                                    minDist = distances[j];
+                                    minIndex = j;
+                                }
+                            }
+                            if(minDist<100&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)>=0){
+                                blobs[minIndex].xValue = xVals+xMid;
+                                blobs[minIndex].yValue = yVals+yMid;
+                                blobs[minIndex].blobSize = currentSize;
+                                blobIDs.push(blobs[minIndex].blobID);
+                            }
+                            for(var j = 0;j<blobs.length;j++){
+                                if(blobIDs.indexOf(blobs[j].blobID)==-1){
+                                    blobs.splice(j,1);
+                                    j--;
+                                }
+                            }
+                            var UUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                                return v.toString(16);
+                            });
+                            blobs.push(new blob(currentSize,R,G,B,xVals+xMid,yVals+yMid,UUID));
                         }
                     }
                 }
@@ -155,18 +196,12 @@
                     ctx.beginPath();
                     ctx.arc(blobs[i].xValue, blobs[i].yValue, 6, 0, 2 * Math.PI, false);
                     ctx.closePath();
-                    ctx.fillStyle = 'red';
                     ctx.fill();
                 }
-                
             }
 
             function fillImg(currentIndex){
-                if((data[currentIndex]==0&&
-                   data[currentIndex+1]==0&&data[currentIndex+2]==0)||(filled.indexOf(currentIndex)>=0)){
-                    return;
-                }
-                else{
+                if(data[currentIndex] == 0&&data[currentIndex+1] == 255&&data[currentIndex+2] == 0){
                     if(up){
                         ySum++
                         upCount++;
