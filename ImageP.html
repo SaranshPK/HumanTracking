@@ -4,6 +4,7 @@
     </style>
     <body>
         <button id="analbutton" onclick="analyze()">Analyze</button>
+        <button id="seek" onclick="seek()">Seek</button>
         <input id="valuePicker" type="range" min="0" max="765">
         <select id="imagePicker" onchange="newImage()">
             <option value="thermal.jpg">1 Person</option>
@@ -75,6 +76,9 @@
             {
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 analyze();
+            }
+            function seek(){
+                document.getElementById("video").currentTime = document.getElementById("video").currentTime+5;
             }
             function newImage(){
                 image.src = imagePicker.value;
@@ -170,7 +174,7 @@
                                     minIndex = j;
                                 }
                             }
-                            if(minDist<400&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)==-1&&blobs[minIndex].fresh == false){
+                            if(minDist<600&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)==-1&&blobs[minIndex].fresh == false){
                                 blobs[minIndex].xValue = xVals+xMid;
                                 blobs[minIndex].yValue = yVals+yMid;
                                 blobs[minIndex].blobSize = currentSize;
@@ -184,7 +188,6 @@
                                 blobs.push(new blob(currentSize,R,G,B,xVals+xMid,yVals+yMid,UUID));
                                 blobIDs.push(UUID);
                             }
-                            
                         }
                     }
                 }
