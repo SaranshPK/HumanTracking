@@ -1,0 +1,41 @@
+from PIL import Image
+class Blob:
+    def __init__(self, blobSize,color,xValue,yValue,blobID):
+        self.blobSize = blobSize
+        self.color = color
+        self.xValue = xValue
+        self.yValue = yValue
+        self.blobID = blobID
+        self.fresh = True
+
+xMidSum = 0
+yMidSum = 0
+xSum = 0
+ySum = 0
+
+up = false
+right = false
+left = false
+down = false
+
+upCount = 0
+rightCount = 0
+leftCount = 0
+downCount = 0
+
+currentSize = 0
+blobs = []
+filled = []
+blobIDs = []
+
+im = Image.open("thermal.jpg")
+pix = im.load()
+x = 100
+y = 200
+im.show()
+print(im.size)
+print(pix[x, y])
+
+def analyze():
+    importantIndexes = []
+    for x in 
