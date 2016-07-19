@@ -13,10 +13,10 @@ yMidSum = 0
 xSum = 0
 ySum = 0
 
-up = false
-right = false
-left = false
-down = false
+up = False
+right = False
+left = False
+down = False
 
 upCount = 0
 rightCount = 0
@@ -35,7 +35,8 @@ y = 200
 im.show()
 print(im.size)
 print(pix[x, y])
-
+'''
 def analyze():
     importantIndexes = []
     for x in 
+'''

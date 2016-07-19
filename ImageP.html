@@ -3,29 +3,22 @@
     <style>
     </style>
     <body>
-        <!--<button id="analbutton" onclick="analyze()">Analyze</button>
+        <button id="analbutton" onclick="analyze()">Analyze</button>
         <button id="seek" onclick="seek()">Seek</button>
         <input id="valuePicker" type="range" min="0" max="765">
         <select id="imagePicker" onchange="newImage()">
             <option value="thermal.jpg">1 Person</option>
             <option value="thermal2.jpg">2 People</option>
-            <option value="thermal3.jpg">Greyscale</option>
+            <option value="thermal3.jpg">Greyscale</option>s
             <option value="thermal4.jpg">Many People</option>
         </select>
         <video id="video" autoplay="true" controls="false" hidden="true">
             <source src="videoplayback.mp4">
         </video>
         <br>
-        <canvas id="ThermImg"></canvas>-->
-        <label id="testVal"></label>
-        
-        <script src="/socket.io/socket.io.js"></script>
+        <canvas id="ThermImg"></canvas>
         <script>
-            var socket = io();
-            socket.on('Update',function(i){
-                document.getElementById('testVal').innerHTML = i;
-            });
-            /*
+            
             var canvas = document.getElementById("ThermImg");
             var image = new Image();
             image.src = "thermal.jpg";
@@ -266,7 +259,7 @@
                     left = false;
                     down = false;
                 }
-            }*/
+            }
         </script>
     </body>
 </html>
