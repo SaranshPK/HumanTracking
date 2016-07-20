@@ -28,7 +28,7 @@ blobs = []
 filled = []
 blobIDs = []
 
-im = Image.open("thermal.jpg")
+im = Image.open("thermalpng.png")
 pix = im.load()
 x = 100
 y = 200
