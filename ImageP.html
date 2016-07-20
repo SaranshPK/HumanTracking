@@ -47,7 +47,6 @@
             
             var currentSize;
             var blobs = [];
-            var filled = [];
             var blobIDs = [];
             
             function blob(blobSize,Red,Green,Blue,xValue,yValue,blobID){
@@ -93,39 +92,11 @@
                         importantIndexes.push(i);
                     }
                 }
-                for(var i = 0; i<importantIndexes.length;i++){
-                    var imageIndex = importantIndexes[i]
-                    data[imageIndex] = 0;
-                    data[imageIndex+1] = 255;
-                    data[imageIndex+2] = 0;
-                }
-                var borderIndexes = [];
-                for(var i = 0; i < data.length; i += 4){
-                    if(data[i+1] == 255){
-                        if(i>canvas.width*4&&i<data.length-4-canvas.width*4){
-                            if(data[i+canvas.width*4+1]!=255 || data[i+4+1]!=255 || data[i-4+1]!=255 || data[i-canvas.width*4+1]!=255){
-                                borderIndexes.push(i);
-                            }
-                            else{
-                                
-                            }
-                        }
-                    }
-                }
-                
-                for(var i = 0; i<importantIndexes.length;i++){
-                    var borderIndex = borderIndexes[i];
-                    data[borderIndex] = 0;
-                    data[borderIndex+1] = 0;
-                    data[borderIndex+2] = 0;
-                } 
-                filled = [];
                 blobIDs = [];
                 for(var i = 0; i<importantIndexes.length;i++){
-                    if((data[importantIndexes[i]]==0&&data[importantIndexes[i]+1]==0&&data[importantIndexes[i]+2]==0)||
-                        (filled.indexOf(importantIndexes[i])>=0)){
-                    }
-                    else{
+                    if(data[i] != 0 &&
+                            data[i+1] != 0 &&
+                            data[i+2] != 0){
                         currentSize = 0;
                         R = Math.round(Math.random()*255);
                         G = Math.round(Math.random()*255);  
@@ -187,7 +158,7 @@
                     }
                 }
                 ctx.putImageData(imageData, 0, 0);
-                for(var i = 0;i<blobs.length;i++){  //9704180/
+                for(var i = 0;i<blobs.length;i++){
                     blobs[i].fresh = false;
                     ctx.fillStyle = "rgb("+blobs[i].Red+","+blobs[i].Green+","+blobs[i].Blue+")";
                     ctx.fillText("Blob:" + blobs[i].blobSize,10,i*10+10,canvas.width);
@@ -199,32 +170,34 @@
             }
 
             function fillImg(currentIndex){
-                if(data[currentIndex] == 0&&data[currentIndex+1] == 255&&data[currentIndex+2] == 0){
+                if(data[currentIndex] != 0 &&
+                        data[currentIndex+1] != 0 &&
+                        data[currentIndex+2] != 0 &&
+                        importantIndexes.indexOf(currentIndex)>=0){
                     if(up){
-                        ySum++
+                        ySum++;
                         upCount++;
                         downCount--;
                         yMidSum-=upCount;
                     }
                     else if(right){
-                        xSum++
+                        xSum++;
                         rightCount++;
                         leftCount--;
                         xMidSum+=rightCount;
                     }
                     else if(left){
-                        xSum++
+                        xSum++;
                         leftCount++;
                         rightCount--;
                         xMidSum-=leftCount;
                     }
                     else if(down){
-                        ySum++
+                        ySum++;
                         downCount++;
                         upCount--;
                         yMidSum+=downCount;
                     }
-                    filled.push(currentIndex);
                     currentSize++;
                     data[currentIndex] = 0;
                     data[currentIndex+1] = 0;
