@@ -1,8 +1,12 @@
-from PIL import Image
-im = Image.open("/Users/Abbad/Downloads/hell.png")
-rgb_im = im.convert('RGB')
-r, g, b = rgb_im.getpixel((317,292))
+from PIL import Image, ImageMath
 
-print r, g, b
+im = Image.open("thermalpng.png")
+pixdata = im.load()
 
+
+
+for y in xrange(im.size[1]):
+    for x in xrange(im.size[0]):
+        if (pixdata[x, y][0]+pixdata[x, y][1]+pixdata[x, y][2]>400):
+            pixdata[x, y] = (0, 255, 0, 255)
 im.show(im)
