@@ -3,26 +3,12 @@
     <style>
     </style>
     <body>
-        <button id="analbutton" onclick="analyze()">Analyze</button>
-        <button id="seek" onclick="seek()">Seek</button>
         <input id="valuePicker" type="range" min="0" max="765">
-        <select id="imagePicker" onchange="newImage()">
-            <option value="thermal.jpg">1 Person</option>
-            <option value="thermal2.jpg">2 People</option>
-            <option value="thermal3.jpg">Greyscale</option>s
-            <option value="thermal4.jpg">Many People</option>
-        </select>
-        <video id="video" autoplay="true" controls="false" hidden="true">
-            <source src="videoplayback.mp4">
-        </video>
         <br>
         <canvas id="ThermImg"></canvas>
         <script>
             
             var canvas = document.getElementById("ThermImg");
-            var image = new Image();
-            image.src = "thermal.jpg";
-            var ctx;
             var imageData;
             var data;
             var importantIndexes;
@@ -61,25 +47,25 @@
                 this.fresh = true;
             }
             var renderID;
-            image.onload = function() {
-                canvas.width = image.width;
-                canvas.height = image.height;
-                ctx = canvas.getContext("2d");
-                ctx.drawImage(image, 0, 0);
-                imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-                document.getElementById("valuePicker").value = 600;
+            document.getElementById("valuePicker").value = 600;
+
+            var img = new Image,
+            ctx = canvas.getContext("2d"),
+            src = "http://192.168.1.91:8080";
+
+            img.crossOrigin = "Anonymous";
+
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage( img, 0, 0 );
                 renderID = setInterval(capture,100);
-            };
+            }
+            img.src = src;
             function capture()
             {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 analyze();
-            }
-            function seek(){
-                document.getElementById("video").currentTime = document.getElementById("video").currentTime+5;
-            }
-            function newImage(){
-                image.src = imagePicker.value;
             }
             function analyze(){
                 imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
