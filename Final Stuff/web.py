@@ -211,6 +211,7 @@ try:
 
                 pixdata = image.load()
                 analyze()
+                
                 # image = image.rotate(90).resize((80*5, 60*5), Image.ANTIALIAS)
                 image = image.rotate(0).resize((80 * 9, 60 * 9))
 
