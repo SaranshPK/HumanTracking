@@ -11,6 +11,12 @@ class Blob:
         self.blobID = blobID
         self.fresh = True
 
+r = randint(0, 255) 
+g = randint(0, 255)
+b = randint(0, 255)
+
+rcolor = (r, g, b, 255)
+
 currentSize = 0
 
 upCount = 0
@@ -66,6 +72,58 @@ def analyze():
     for pixel in importantIndexes:
         if (checkValid(pixel[0],pixel[1])):
             reset()
+
+            pixdata[pixel[0],pixel[1]] = rcolor
+            fillAll(pixel)
+            if((xSum != 0) or (ySum != 0)):
+                xMid = xMidSum /(xSum) + pixel[x]
+                yMid = yMidSum /(ySum) + pixel[y]
+                midpoint = [xMid,yMid]
+                pixdata[midpoint[0],midpoint[1]] = rcolor
+                print mindpoint
+		elif:
+			r = randint(0, 255) 
+			g = randint(0, 255)
+			b = randint(0, 255)
+
+			rcolor = (r, g, b, 255)
+
+def fillUp(pixel):
+    if(checkValid(pixel)):
+        pixdata[pixel[0],pixel[1]] = rcolor
+        pixel[1] = pixel[1]-1
+        ySum+=1
+        upCount+=1
+        downCount-=1
+        yMidSum-=upCount
+        fillAll(pixel)
+    else:
+		r = randint(0, 255) 
+		g = randint(0, 255)
+		b = randint(0, 255)
+
+		rcolor = (r, g, b, 255)
+
+def fillRight(pixel):
+    if(checkValid(pixel)):
+        pixdata[pixel[0],pixel[1]] = rcolor
+        pixel[0] = pixel[0]+1
+        xSum+=1
+        rightCount+=1
+        leftCount-=1
+        xMidSum+=rightCount
+        fillAll(pixel)
+    else:
+		r = randint(0, 255) 
+		g = randint(0, 255)
+		b = randint(0, 255)
+		rcolor = (r, g, b, 255)
+
+def fillDown(pixel):
+    if(checkValid(pixel)):
+        pixdata[pixel[0],pixel[1]] = rcolor
+        pixel[1] = pixel[1]+1
+
             r = randint(0, 254)
             g = randint(0, 254)
             b = randint(0, 254)
@@ -118,6 +176,7 @@ def fillLeft(x,y):
     if(checkValid(x,y)):
         pixdata[x,y] = (r, g, b, 0)
 
+
         xSum+=1
         leftCount+=1
         rightCount-=1
@@ -132,10 +191,33 @@ def fillDown(x,y):
     if(checkValid(x,y)):
         pixdata[x,y] = (r, g, b, 0)
 
+
+	else:
+       	r = randint(0, 255) 
+		g = randint(0, 255)
+		b = randint(0, 255)
+
+		rcolor = (r, g, b, 255)
+
+
+
+def fillLeft(pixel):
+    if(checkValid(pixel)):
+        pixdata[pixel[0],pixel[1]] = rcolor
+        pixel[0] = pixel[0]-1
+
         ySum+=1
         downCount+=1
         upCount-=1
         yMidSum+=downCount
+
+        fillAll(pixel)
+    else:
+		r = randint(0, 255) 
+		g = randint(0, 255)
+		b = randint(0, 255)
+		rcolor = (r, g, b, 255)
+
         currentSize += 1
         fillAll(x,y)
 
@@ -145,6 +227,7 @@ def fillAll(x,y):
     fillRight(x,y)
     fillDown(x,y)
     fillLeft(x,y)
+
 
 
 def checkValid(x,y):
