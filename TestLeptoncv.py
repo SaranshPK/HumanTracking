@@ -1,20 +1,14 @@
-#!/usr/bin/env python
-
-import socket
+import numpy as np
+import json
+import cv2
+import time
 import sys
 import os
-import time
 from PIL import Image
+from pylepton import Lepton
 from random import randint
-import numpy
-
-from PIL import Image, ImageOps, ImageEnhance, ImageFont, ImageDraw
-
 sys.setrecursionlimit(10000)
 
-os.system("./agcenable.exe")
-
-# font = ImageFont.truetype("/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf",6)
 
 class Blob:
     def __init__(self, blobSize,color,midpoint,blobID):
@@ -23,22 +17,20 @@ class Blob:
         self.midpoint = midpoint
         self.blobID = blobID
         self.fresh = True
-currentSize = 0
 
+
+currentSize = 0
 upCount = 0
 rightCount = 0
 leftCount = 0
 downCount = 0
-
 xMidSum = 0
 yMidSum = 0
 xSum = 0
 ySum = 0
-
 r = 0
 g = 0
 b = 0
-
 blobs = []
 
 def reset():
@@ -91,7 +83,7 @@ def analyze():
             else:
                 yMid = yMidSum /(ySum) + pixel[1]
             midpoint = [xMid,yMid]
-    print blobCount
+
 
 def fillUp(x,y):
     global upCount, downCount, yMidSum, ySum, currentSize, r, g, b
@@ -105,6 +97,7 @@ def fillUp(x,y):
         yMidSum -= upCount
         currentSize += 1
         fillAll(x,y)
+
 
 def fillRight(x,y):
     global rightCount, leftCount, xMidSum, xSum, currentSize, r, g, b
@@ -164,83 +157,30 @@ def checkValid(x,y):
     else:
         return False
 
+while True:
+    FileName = "output.png"
+    with Lepton() as l:
+        a,_ = l.capture()
+    cv2.normalize(a, a, 0, 65535, cv2.NORM_MINMAX) # extend contrast
 
-text = 1
-tcolor = (255, 255, 0)
-text_pos = (0, 0)
-framecounter = 0
+    np.right_shift(a, 8, a) # fit data into 8 bits
+    cv2.imwrite(FileName,np.uint8(a))
+    image = Image.open(FileName)
+    image = image.convert('RGB')
+    pixdata = image.load()
+    analyze()
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    quality_val = 80
+    image.save(FileName)
 
-# Bind the socket to the port
-server_address = ('', 8080)
-print 'starting up on %s port %s' % server_address
+    with open(FileName, 'rb') as f:
+        imdata = f.read()
+        f.close()
 
-sock.bind(server_address)
-sock.listen(1)
-try:
+    outjson = {}
+    outjson['img'] = imdata.encode('base64')
+    outjson['blobs'] = blobs
+    json_data = json.dumps(outjson)
 
-    while True:
-
-        print 'waiting for a connection'
-        connection, client_address = sock.accept()
-
-        connection.sendall("HTTP/1.1 200 OK\n")
-        # headers = {'Content-Type': 'multipart/x-mixed-replace;boundary=--informs','Access-Control-Allow-Origin': '*'};
-        connection.sendall("Content-Type: multipart/x-mixed-replace;boundary=--informs\n")
-        connection.sendall("Access-Control-Allow-Origin: *\n")
-        # connection.sendall("Transfer-Encoding: chunked\n")
-
-        while (True):
-
-            var = os.system("./frame.exe")
-
-            if (var == 0):
-
-                data = numpy.loadtxt("/run/shm/Numpey.dat", numpy.uint8)
-
-                framecounter = framecounter + 1
-                #print "frame: " + str(framecounter)
-
-                image = Image.fromarray(data)
-
-                # image.putpalette(HeatMap)
-                image = image.convert('RGB')
-
-                pixdata = image.load()
-                analyze()
-                # image = image.rotate(90).resize((80*5, 60*5), Image.ANTIALIAS)
-                image = image.rotate(0).resize((80 * 9, 60 * 9))
-
-                # draw = ImageDraw.Draw(image)
-                # draw.text(text_pos, str(framecounter), fill=tcolor, font=font)
-
-                TmpFileName = "latest.png"
-
-                quality_val = 80
-                image.save(TmpFileName, quality=quality_val)
-
-                connection.sendall("\n--informs\n")
-                connection.sendall("Content-Type: image/png\n")
-                connection.sendall("Content-Length: " + str(os.stat(TmpFileName).st_size) + "\n\n")
-                #print "Image Size: " + str(os.stat(TmpFileName).st_size)
-
-                with open(TmpFileName, 'rb') as f:
-                    data = f.read()
-                    f.close()
-
-                connection.sendall(data)
-                connection.sendall("\n")
-                connection.sendall("")
-
-                time.sleep(.10)
-            else:
-                #print "\nWarning failed read"
-                time.sleep(.05)
-
-
-finally:
-    # Clean up the connection
-    connection.close()
+    print json_data
+    time.sleep(0.1) 
