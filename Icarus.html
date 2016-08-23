@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<canvas id="ThermImg"></canvas>
+	<script>
+        var canvas = document.getElementById("ThermImg");
+        var inProcess = false;
+        var renderID = setInterval(capture,100)
+		function httpGetAsync(theUrl, callback)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    callback(xmlHttp.responseText);
+            }
+            xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+            xmlHttp.setRequestHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            xmlHttp.send(null);
+        }
+        function processReq(responseJson)
+        {
+            if(responseJson!="None")
+            {
+                var jsonData = eval('(' + responseJson + ')');
+                var myImage = new Image,
+                ctx = canvas.getContext("2d");
+                myImage.onload = function() {
+                    canvas.width = myImage.width;
+                    canvas.height = myImage.height;
+                    ctx.drawImage(myImage, 0, 0);
+                }
+                myImage.src = 'data:image/png;base64,'+jsonData.img;
+            }
+            inProcess = false;
+            
+        }
+        function capture()
+        {
+            if(!inProcess){
+                httpGetAsync("http://192.168.1.61:8080",processReq);
+                inProcess = true;
+            }
+        }
+	</script>
+
+</body>
+</html>

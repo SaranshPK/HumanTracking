@@ -4,11 +4,27 @@ import cv2
 import time
 import sys
 import os
+import thread
 from PIL import Image
 from pylepton import Lepton
 from random import randint
 sys.setrecursionlimit(10000)
 
+import web
+
+urls = (
+    '/(.*)', 'hello'
+)
+app = web.application(urls, globals())
+
+
+class hello:
+    def GET(self, name):
+        return json_data
+
+
+if __name__ == "__main__":
+    app.run()
 
 class Blob:
     def __init__(self, blobSize,color,midpoint,blobID):
@@ -32,6 +48,10 @@ r = 0
 g = 0
 b = 0
 blobs = []
+json_data = None
+pixdata = None
+image = None
+
 
 def reset():
     global upCount
@@ -55,7 +75,7 @@ def reset():
 
 
 def analyze():
-    global upCount, rightCount, leftCount, downCount, xMidSum, yMidSum, xSum, ySum, currentSize, r, g, b
+    global upCount, rightCount, leftCount, downCount, xMidSum, yMidSum, xSum, ySum, currentSize, r, g, b, image
     importantIndexes = []
     for y in xrange(image.size[1]):
         for x in xrange(image.size[0]):
@@ -157,30 +177,38 @@ def checkValid(x,y):
     else:
         return False
 
-while True:
-    FileName = "output.png"
-    with Lepton() as l:
-        a,_ = l.capture()
-    cv2.normalize(a, a, 0, 65535, cv2.NORM_MINMAX) # extend contrast
 
-    np.right_shift(a, 8, a) # fit data into 8 bits
-    cv2.imwrite(FileName,np.uint8(a))
-    image = Image.open(FileName)
-    image = image.convert('RGB')
-    pixdata = image.load()
-    analyze()
+def runCode():
+    while True:
+        global pixdata, json_data, image
+        FileName = "output.png"
+        with Lepton() as l:
+            a, _ = l.capture()
+        cv2.normalize(a, a, 0, 65535, cv2.NORM_MINMAX)  # extend contrast
 
-    quality_val = 80
-    image.save(FileName)
+        np.right_shift(a, 8, a)  # fit data into 8 bits
+        cv2.imwrite(FileName, np.uint8(a))
+        image = Image.open(FileName)
+        image = image.convert('RGB')
+        pixdata = image.load()
+        analyze()
+        image = image.resize((80 * 9, 60 * 9))
 
-    with open(FileName, 'rb') as f:
-        imdata = f.read()
-        f.close()
+        quality_val = 80
+        image.save(FileName)
 
-    outjson = {}
-    outjson['img'] = imdata.encode('base64')
-    outjson['blobs'] = blobs
-    json_data = json.dumps(outjson)
+        with open(FileName, 'rb') as f:
+            imdata = f.read()
+            f.close()
 
-    print json_data
-    time.sleep(0.1) 
+        outjson = {}
+        outjson['img'] = imdata.encode('base64')
+        outjson['blobs'] = blobs
+        json_data = json.dumps(outjson)
+        time.sleep(0.1)
+
+
+try:
+   thread.start_new_thread(runCode, ())
+except:
+   print "Error: unable to start thread"
