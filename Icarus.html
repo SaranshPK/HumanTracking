@@ -2,6 +2,7 @@
 <html>
 <body>
 	<canvas id="ThermImg"></canvas>
+    <label id = "BlobsJson">None</label>
 	<script>
         var canvas = document.getElementById("ThermImg");
         var inProcess = false;
@@ -30,6 +31,7 @@
                     ctx.drawImage(myImage, 0, 0);
                 }
                 myImage.src = 'data:image/png;base64,'+jsonData.img;
+                document.getElementById("BlobsJson").innerHTML = jsonData.blobs
             }
             inProcess = false;
             

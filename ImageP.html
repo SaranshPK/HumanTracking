@@ -120,7 +120,7 @@
                                     minIndex = j;
                                 }
                             }
-                            if(minDist<600&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)==-1&&blobs[minIndex].fresh == false){
+                            if(minDist<300&&minDist>=0&&blobIDs.indexOf(blobs[minIndex].blobID)==-1&&blobs[minIndex].fresh == false){
                                 blobs[minIndex].xValue = xVals+xMid;
                                 blobs[minIndex].yValue = yVals+yMid;
                                 blobs[minIndex].blobSize = currentSize;
