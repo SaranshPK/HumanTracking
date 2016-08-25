@@ -21,6 +21,7 @@ app = web.application(urls, globals())
 
 class hello:
     def GET(self, name):
+        web.header("Access-Control-Allow-Origin","*")
         return json_data
 
 

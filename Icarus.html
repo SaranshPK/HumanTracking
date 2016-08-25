@@ -31,13 +31,19 @@
                     canvas.height = myImage.height;
                     ctx.drawImage(myImage, 0, 0);
                     obj = JSON.parse(jsonData.blobs);
+                    pixelCount = 0;
                     for (var i = 0;i<obj.length;i++){
                         ctx.fillStyle = '#'+obj[i].blobID.slice(2,8);
                         ctx.beginPath();
                         ctx.arc(obj[i].midpoint[0]*9, obj[i].midpoint[1]*9, obj[i].blobSize/20, 0, 2 * Math.PI, false);
                         ctx.closePath();
                         ctx.fill();
+                        pixelCount += obj[i].blobSize;
                     }
+                    
+                    ctx.font = "50px Arial"
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fillText(pixelCount/400, 50, 60, 500)
                 }
                 myImage.src = 'data:image/png;base64,'+jsonData.img;
                 document.getElementById("BlobsJson").innerHTML = jsonData.blobs;
