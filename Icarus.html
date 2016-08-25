@@ -2,11 +2,14 @@
 <html>
 <body>
 	<canvas id="ThermImg"></canvas>
+    <br>
     <label id = "BlobsJson">None</label>
 	<script>
         var canvas = document.getElementById("ThermImg");
         var inProcess = false;
         var renderID = setInterval(capture,100)
+        var myImage = new Image()
+        var ctx = canvas.getContext("2d");
 		function httpGetAsync(theUrl, callback)
         {
             var xmlHttp = new XMLHttpRequest();
@@ -23,15 +26,21 @@
             if(responseJson!="None")
             {
                 var jsonData = eval('(' + responseJson + ')');
-                var myImage = new Image,
-                ctx = canvas.getContext("2d");
                 myImage.onload = function() {
                     canvas.width = myImage.width;
                     canvas.height = myImage.height;
                     ctx.drawImage(myImage, 0, 0);
+                    obj = JSON.parse(jsonData.blobs);
+                    for (var i = 0;i<obj.length;i++){
+                        ctx.fillStyle = '#'+obj[i].blobID.slice(2,8);
+                        ctx.beginPath();
+                        ctx.arc(obj[i].midpoint[0]*9, obj[i].midpoint[1]*9, obj[i].blobSize/20, 0, 2 * Math.PI, false);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
                 }
                 myImage.src = 'data:image/png;base64,'+jsonData.img;
-                document.getElementById("BlobsJson").innerHTML = jsonData.blobs
+                document.getElementById("BlobsJson").innerHTML = jsonData.blobs;
             }
             inProcess = false;
             
@@ -39,7 +48,7 @@
         function capture()
         {
             if(!inProcess){
-                httpGetAsync("http://192.168.1.61:8080",processReq);
+                httpGetAsync("http://192.168.2.154:8080",processReq);
                 inProcess = true;
             }
         }
