@@ -2,14 +2,20 @@
 <html>
 <body>
 	<canvas id="ThermImg"></canvas>
-    <br>
-    <label id = "BlobsJson">None</label>
 	<script>
         var canvas = document.getElementById("ThermImg");
+        canvas.width = window.innerWidth;
+        canvas.height = 500;
         var inProcess = false;
         var renderID = setInterval(capture,100)
         var myImage = new Image()
         var ctx = canvas.getContext("2d");
+        ctx.font = "20px Arial";
+        ctx.textAlign = 'center';
+        ctx.fillText("Loading... Please Wait.",canvas.width/2,30,500);
+        ctx.fillText("If you still dont see anything",canvas.width/2,60,500);
+        ctx.fillText("please make sure you are conected to Foundry2 wifi",canvas.width/2,82,500);
+        ctx.fillText("wifi password: !yrdnuoF",canvas.width/2,112,500);
 		function httpGetAsync(theUrl, callback)
         {
             var xmlHttp = new XMLHttpRequest();
@@ -41,12 +47,11 @@
                         pixelCount += obj[i].blobSize;
                     }
                     
-                    ctx.font = "50px Arial"
+                    ctx.font = "50px Arial";
                     ctx.fillStyle = '#FF0000';
-                    ctx.fillText(pixelCount/400, 50, 60, 500)
+                    ctx.fillText(pixelCount/400, 50, 60, 500);
                 }
                 myImage.src = 'data:image/png;base64,'+jsonData.img;
-                document.getElementById("BlobsJson").innerHTML = jsonData.blobs;
             }
             inProcess = false;
             
