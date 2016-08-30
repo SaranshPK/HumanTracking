@@ -13,6 +13,9 @@ from pylepton import Lepton
 from random import randint
 sys.setrecursionlimit(10000)
 
+
+multiplicationFactor = 9
+
 urls = (
     '/(.*)', 'hello'
 )
@@ -30,10 +33,11 @@ if __name__ == "__main__":
     app.run()
 
 class Blob:
-    def __init__(self, blobSize,midpoint,blobID):
+    def __init__(self, blobSize,midpoint,blobID,blobPixels):
         self.blobSize = blobSize
         self.midpoint = midpoint
         self.blobID = blobID
+        self.blobPixels = blobPixels
 
 
 currentSize = 0
@@ -43,6 +47,7 @@ blobs = []
 json_data = None
 pixdata = None
 image = None
+localblobPixels = []
 
 
 def reset():
@@ -55,7 +60,7 @@ def reset():
 
 
 def analyze():
-    global xSum, ySum, currentSize, r, g, b, image
+    global xSum, ySum, currentSize, r, g, b, image, localblobPixels
     blobCount = 0
     tempBlobs = []
     for blob in blobs:
@@ -63,11 +68,13 @@ def analyze():
     for y in xrange(image.size[1]):
         for x in xrange(image.size[0]):
             if checkValid(x, y):
+                localblobPixels = []
                 reset()
                 ySum += y
                 xSum += x
                 currentSize += 1
                 pixdata[x, y] = (0, 0, 0)
+                localblobPixels.append([x,y])
                 fillAll(x, y)
                 if currentSize > 10:
                     if xSum == 0:
@@ -91,22 +98,23 @@ def analyze():
                         minIndex = blobs.index(closestBlob)
                         blobs[minIndex].midpoint = midpoint
                         blobs[minIndex].blobSize = currentSize
+                        blobs[minIndex].blobPixels = localblobPixels
                         tempBlobs.remove(closestBlob)
                     else:
                         uid = uuid.uuid1()
                         uid_str = uid.urn
                         str = uid_str[9:]
-                        blobs.append(Blob(currentSize, midpoint, str))
+                        blobs.append(Blob(currentSize, midpoint, str, localblobPixels))
     for blob in tempBlobs:
         blobs.remove(blob)
 
 
 def fillUp(x, y):
-    global ySum, xSum, currentSize
+    global ySum, xSum, currentSize, localblobPixels
     y -= 1
     if checkValid(x, y):
         pixdata[x, y] = (0, 0, 0)
-
+        localblobPixels.append([x, y])
         ySum += y
         xSum += x
         currentSize += 1
@@ -114,11 +122,11 @@ def fillUp(x, y):
 
 
 def fillRight(x, y):
-    global ySum, xSum, currentSize
+    global ySum, xSum, currentSize, localblobPixels
     x += 1
     if checkValid(x, y):
         pixdata[x, y] = (0, 0, 0)
-
+        localblobPixels.append([x, y])
         ySum += y
         xSum += x
         currentSize += 1
@@ -126,11 +134,11 @@ def fillRight(x, y):
 
 
 def fillLeft(x, y):
-    global ySum, xSum, currentSize
+    global ySum, xSum, currentSize, localblobPixels
     x -= 1
     if checkValid(x, y):
         pixdata[x, y] = (0, 0, 0)
-
+        localblobPixels.append([x, y])
         ySum += y
         xSum += x
         currentSize += 1
@@ -138,11 +146,11 @@ def fillLeft(x, y):
 
 
 def fillDown(x, y):
-    global ySum, xSum, currentSize
+    global ySum, xSum, currentSize, localblobPixels
     y += 1
     if checkValid(x, y):
         pixdata[x, y] = (0, 0, 0)
-
+        localblobPixels.append([x, y])
         ySum += y
         xSum += x
         currentSize += 1
@@ -172,7 +180,7 @@ def obj_dict(obj):
 
 def runCode():
     while True:
-        global pixdata, json_data, image
+        global pixdata, json_data, image, multiplicationFactor
         FileName = "output.png"
         with Lepton() as l:
             a, _ = l.capture()
@@ -181,22 +189,24 @@ def runCode():
         np.right_shift(a, 8, a)  # fit data into 8 bits
         cv2.imwrite(FileName, np.uint8(a))
         image = Image.open(FileName)
+        imageOrigin = Image.open(FileName)
         image = image.convert('RGB')
         pixdata = image.load()
         analyze()
-        image = image.resize((80 * 9, 60 * 9))
 
-        quality_val = 80
-        image.save(FileName)
+        imageOrigin = imageOrigin.resize((80 * multiplicationFactor, 60 * multiplicationFactor))
+        imageOrigin.save(FileName)
 
         with open(FileName, 'rb') as f:
             imdata = f.read()
             f.close()
 
-        outjson = {}
-        outjson['img'] = imdata.encode('base64')
         json_blobs = json.dumps(blobs, default=obj_dict)
-        outjson['blobs'] = json_blobs
+        outjson = {
+            "blobs": json.loads(json_blobs),
+            "img": imdata.encode('base64'),
+            "multiplicationFactor": multiplicationFactor
+        }
         json_data = json.dumps(outjson)
 
 try:

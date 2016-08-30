@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html>
 <body>
+    <button onclick="togglePic()">Overlay</button>
+    <button onclick="toggleMid()">Midpoint</button>
+    <button onclick="toggleTrack()">Tracking</button>
+    <input type="range" id="trackVals" min="5" value="12" max="20" step="1">>
+    <br>
 	<canvas id="ThermImg"></canvas>
 	<script>
+        var overlaydisplay = true;
+        var middisplay = true;
+        var trackdisplay = true;
+        var mf = 0;
+        tracks = []
+        function track(UUID){
+            this.UUID = UUID;
+            this.midpoints = [];
+            this.altered = true;
+        }
         var canvas = document.getElementById("ThermImg");
         canvas.width = window.innerWidth;
         canvas.height = 500;
@@ -27,24 +42,85 @@
             xmlHttp.setRequestHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
             xmlHttp.send(null);
         }
-        function processReq(responseJson)
-        {
-            if(responseJson!="None")
-            {
+        function processReq(responseJson){
+            if(responseJson!="None"){
                 var jsonData = eval('(' + responseJson + ')');
+                if(mf == 0){
+                    mf = jsonData.multiplicationFactor;
+                }
                 myImage.onload = function() {
                     canvas.width = myImage.width;
                     canvas.height = myImage.height;
                     ctx.drawImage(myImage, 0, 0);
-                    obj = JSON.parse(jsonData.blobs);
-                    pixelCount = 0;
+                    obj = jsonData.blobs;
+                    pixelCount = 0; 
+                    var tempArray = [];
                     for (var i = 0;i<obj.length;i++){
-                        ctx.fillStyle = '#'+obj[i].blobID.slice(2,8);
-                        ctx.beginPath();
-                        ctx.arc(obj[i].midpoint[0]*9, obj[i].midpoint[1]*9, obj[i].blobSize/20, 0, 2 * Math.PI, false);
-                        ctx.closePath();
-                        ctx.fill();
+                        if(overlaydisplay){
+                            ctx.save();
+                            ctx.fillStyle = "Black"
+                            for(var pix = 0;pix<obj[i].blobPixels.length;pix++)
+                                ctx.fillRect(obj[i].blobPixels[pix][0]*mf,obj[i].blobPixels[pix][1]*mf,mf,mf);
+                            ctx.restore();
+                        }
+                        if(middisplay){
+                            ctx.save();
+                            ctx.fillStyle = '#'+obj[i].blobID.slice(2,8);
+                            ctx.beginPath();
+                            var midSize = obj[i].blobSize/20;
+                            if (midSize>40) midSize = 40;
+                            ctx.arc(obj[i].midpoint[0]*mf, obj[i].midpoint[1]*mf, midSize, 0, 2 * Math.PI, false);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.restore();
+                        }
                         pixelCount += obj[i].blobSize;
+                        if(trackdisplay){
+                            tempArray.push(obj[i])
+                            for (var j = 0;j<tracks.length;j++){
+                                if(obj[i].blobID == tracks[j].UUID){
+                                    var index = tempArray.indexOf(obj[i])
+                                    tempArray.splice(index,1);
+                                    while(tracks[j].midpoints.length >= document.getElementById("trackVals").value){
+                                        tracks[j].midpoints.splice(0,1);
+                                    }
+                                    tracks[j].midpoints.push(obj[i].midpoint);
+                                    tracks[j].altered = true;
+                                }
+                            }
+                        }
+                        else
+                            tracks = [];
+                    }
+                    for (var i = 0;i<tempArray.length;i++){
+                        var objTrack = new track(tempArray[i].blobID);
+                        objTrack.midpoints.push(tempArray[i].midpoint);
+                        tracks.push(objTrack);
+                        
+                    }
+                    for (var i = 0;i<tracks.length;i++){
+                        if(!tracks[i].altered){
+                            if(tracks[i].midpoints.length == 0){
+                                tracks.splice(i,1);
+                                i--;
+                            }
+                            else
+                                tracks[i].midpoints.splice(0,1);
+                        }
+                    }
+                    for (var i = 0;i<tracks.length;i++){
+                        tracks[i].altered = false;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.lineWidth = '5';
+                        ctx.strokeStyle = '#'+tracks[i].UUID.slice(2,8);
+                        for (var j = 0;j<tracks[i].midpoints.length;j++)
+                            if(j==0)
+                                ctx.moveTo(tracks[i].midpoints[j][0]*mf,tracks[i].midpoints[j][1]*mf)
+                            else
+                                ctx.lineTo(tracks[i].midpoints[j][0]*mf,tracks[i].midpoints[j][1]*mf)
+                        ctx.stroke();
+                        ctx.restore();
                     }
                     
                     ctx.font = "50px Arial";
@@ -52,16 +128,25 @@
                     ctx.fillText(pixelCount/400, 50, 60, 500);
                 }
                 myImage.src = 'data:image/png;base64,'+jsonData.img;
+                    
             }
             inProcess = false;
             
         }
-        function capture()
-        {
+        function capture(){
             if(!inProcess){
                 httpGetAsync("http://192.168.2.154:8080",processReq);
                 inProcess = true;
             }
+        }
+        function togglePic(){
+            overlaydisplay = !overlaydisplay;
+        }
+        function toggleMid(){
+            middisplay = !middisplay;
+        }
+        function toggleTrack(){
+            trackdisplay = !trackdisplay;
         }
 	</script>
 
