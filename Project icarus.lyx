@@ -1,0 +1,627 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Project Icarus: Crowd Analytics and Management
+\end_layout
+
+\begin_layout Address
+Ibrahim Mohiuddine, Abbad Vakil, Haytham Shaban, Saransh Kacharia, Brian
+ Liao
+\end_layout
+
+\begin_layout Right Address
+Fondry10
+\end_layout
+
+\begin_layout Abstract
+This project explores and applies methods of image analyzation in several
+ forms in order to monitor the condition and health of a crowd.
+ Stampedes, congestion, and traffic all occur as a result of inefficient
+ crowd management.
+ The software developed identifies congested areas and determines solutions
+ to avoid congestion based on live data.
+ The data is processed by a local device which is fed via camera.
+ This method was tested in simulation and proved to create a more efficient
+ and congestion-free scenario.
+ Future plans include depth sensing for automatic calibration and suggested
+ course of action.
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Paragraph
+Throughout this paper the crowd analytics software developed by the Project
+ Icarus team will be described in depth along with its hardware applications.
+ This paper is targeted at crowd control teams, event planners, and product
+ developers incorporating the software to various hardware devices and scenarios.
+\end_layout
+
+\begin_layout Itemize
+An overview of Icarus features 
+\end_layout
+
+\begin_layout Itemize
+A systematic overview of the Icarus software, including processing methods
+\end_layout
+
+\begin_layout Itemize
+The analyzation process and methods used to collect the data input from
+ camera sources
+\end_layout
+
+\begin_layout Itemize
+The application of live results/suggestions
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/1.png
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Background
+\end_layout
+
+\begin_layout Paragraph
+In the twenty-first century alone, over sixty-one incidents of human stampedes
+ have occurred across the globe.
+ A commonly overlooked problem, crowd congestion, is an instantaneous occurrence
+ that can have deadly consequences, if not managed preemptively.
+ Of these incidents, five have occurred in Saudi Arabia, primarily during
+ the time of rituals taking place in Mecca.
+ Mecca’s most recent incident was the 2015 Mina human crush.
+ Due to inefficient crowd management, over two million pilgrims were escorted
+ to the same location at the same time of day.
+ A human crush was bound to occur, and over 2,177 pilgrims lost their lives
+ that day.
+\end_layout
+
+\begin_layout Section
+What is Project Icarus?
+\end_layout
+
+\begin_layout Paragraph
+Icarus is a crowd analytics software designed to pull live data from a venue/cro
+wd and apply the data in a meaningful way.
+ Project Icarus utilizes a thermal camera for live frame captures, then
+ processes the images into data that crowd control teams and event planners
+ can use to manage crowds more efficiently.
+ Icarus is able to recognize where crowds of people are located, the size
+ of the crowd, the speed of the crowd, and tracking of the crowd over time.
+\end_layout
+
+\begin_layout Paragraph
+Using the “FLIR Lepton” thermal camera, frames are captured and analyzed
+ using project Icarus’ blob detection software.
+ When the program is executed, the “whiter” parts of the image are detected
+ and ID’d with different colors.
+ This is used to find the size of the crowds and their midpoints, which
+ are found by averaging the locations of each of the pixels in a given blob.
+ 
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/2.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 1
+\end_layout
+
+\begin_layout Subsubsection
+Density Key
+\end_layout
+
+\begin_layout Paragraph
+When a “blob” is recognized, and the proximity is known, Project Icarus
+ is able to calculate how much area is occupied per person.
+ The further a person is from the standard of one square meter, the more
+ saturated its area is in the color of red.
+ This model provides information for efficient and simplistic identification.
+\end_layout
+
+\begin_layout Paragraph
+For high accuracy, samples are collected one after another and analyzed
+ repeatedly.
+ The feed received from the camera is processed on the hardware device and
+ the results are returned to a server.
+ 
+\end_layout
+
+\begin_layout Subsection
+Feed Information
+\end_layout
+
+\begin_layout Paragraph
+Along with receiving data for density from live feed represented by the
+ coloration, the data collected can be used for several applications.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/3.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 2
+\end_layout
+
+\begin_layout Itemize
+The processed image shows:
+\end_layout
+
+\begin_layout Itemize
+Congested or highly dense area into sub squares of the larger image
+\end_layout
+
+\begin_layout Itemize
+The 
+\series bold
+green
+\series default
+ represents are as with close to no congestion
+\end_layout
+
+\begin_layout Itemize
+The 
+\series bold
+yellow
+\series default
+ represents areas with low congestion, potentially a place where the program
+ will not funnel the crowd
+\end_layout
+
+\begin_layout Itemize
+The 
+\series bold
+red
+\series default
+ represents an area which needs to be managed 
+\end_layout
+
+\begin_layout Subsection
+Thermal Camera Identification
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/4.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 3
+\end_layout
+
+\begin_layout Paragraph
+Using Python’s OpenCV, Project Icarus is able to take pictures one after
+ another, and process them consecutively.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/c1.PNG
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+This model allows for tracking moving people along with people at stand
+ still.
+ Using the thermal feed in conjunction with the analyzation software allows
+ for thorough results.
+ The thermal feed also monitors a video feed showing immediate changes in
+ a group of people.
+ This model is accurate for long range cameras as well as short range ones.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/5.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 4
+\end_layout
+
+\begin_layout Paragraph
+A recursive algorithm is applied to each pixel that is “hot” enough to be
+ considered a “blob”.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/c2.PNG
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Icarus Feature Set
+\end_layout
+
+\begin_layout Paragraph
+Using a “FLIR Lepton” thermal camera, instances of data retrieved from footage
+ at a capture rate specified in the program.
+ When the program is executed, the algorithm scans all heat signatures,
+ incrementing by how much mass a certain threshold of thermal readings are
+ covering, and calculating the distance from the crowd to provide an accurate
+ number of people in that area.
+ The algorithm then individualizes each group and attaches a form of identificat
+ion.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/6.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 5
+\end_layout
+
+\begin_layout Paragraph*
+The main features of Icarus are as follows:
+\end_layout
+
+\begin_layout Itemize
+Scans area for heat signatures
+\end_layout
+
+\begin_layout Itemize
+Groups areas of heat based on how much area of the same threshold is connected
+ (“various shapes of different sizes will appear based on the formation
+ of the crowd)
+\end_layout
+
+\begin_layout Itemize
+Recognizes each shape as a separate unit
+\end_layout
+
+\begin_layout Itemize
+Locates congestion points by scanning movement of all shapes and finding
+ areas moving at a slower pace than expected 
+\end_layout
+
+\begin_layout Itemize
+Sends information to “raspberry pi” motherboard, accesses database for layout
+ of intended crowd formation, and map of the area if stored
+\end_layout
+
+\begin_layout Itemize
+Compares movement of crowd to expected route, and delivers visual/audial
+ signals for the crowd to follow accordingly
+\end_layout
+
+\begin_layout Paragraph*
+These features are described in detail in the following sections.
+\end_layout
+
+\begin_layout Section
+Project Icarus System Overview
+\end_layout
+
+\begin_layout Paragraph
+Project Icarus has four main components aside from the software side.
+ The thermal camera captures a feed which is processed by the Raspberry
+ Pi.
+ After processing, the data is sent to a server which packages the results
+ in a JSon query to be used for the client end.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/7.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 6
+\end_layout
+
+\begin_layout Paragraph
+Thermal Camera Frame Analyzation The thermal camera takes pictures one after
+ another to track movement of blob objects.
+ Each frame is parsed through column by column, row by row using Python’s
+ Imaging Library.
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/c3.PNG
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+After each iteration of the function, the x value increases moving across
+ the frame.
+ A flood fill function is called recursively to each of the neighbors of
+ the scanned pixels which are also in the threshold, once a pixel with a
+ value out of range is found a new object is created and stored.
+\end_layout
+
+\begin_layout Subsubsection
+Thermal Camera Movement 
+\end_layout
+
+\begin_layout Paragraph
+Tracking Once each blob’s midpoint is calculated, Project Icarus can track
+ the blob.
+ When the next frame is captured, the previous midpoint’s location is searched,
+ if a midpoint is found within a certain proximity of the old midpoint’s
+ location, it is ID’d the same as the previous midpoint.
+ Thus allowing Project Icarus to track midpoints, or “blobs”.
+\end_layout
+
+\begin_layout Subsection
+Project Icarus Components
+\end_layout
+
+\begin_layout Subsubsection
+“FLIR Lepton” Thermal Camera
+\end_layout
+
+\begin_layout Paragraph
+This micro thermal imaging camera works flawlessly in conjunction with the
+ selected processing hardware.
+\end_layout
+
+\begin_layout Subsubsection
+Raspberry Pi
+\end_layout
+
+\begin_layout Paragraph
+The Raspberry Pi is a compact, yet powerful computer that handles all of
+ the image processing sent to it via the thermal camera.
+\end_layout
+
+\begin_layout Subsubsection
+Python Server
+\end_layout
+
+\begin_layout Paragraph
+A simple Python WebPy server that displays the results of a the program.
+ The results are fed to an HTML file which decodes the Base64 encoded image.
+\end_layout
+
+\begin_layout Subsection
+Applications
+\end_layout
+
+\begin_layout Paragraph
+Several methods for controlling the movement of a group of people can be
+ applied by the client once all the data is received from our program.
+ Statistical analysis of crowds, funneling and management through lights
+ or even people can be integrated seamlessly.
+ 
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/8.png
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 7
+\end_layout
+
+\begin_layout Subsection
+User Scenarios
+\end_layout
+
+\begin_layout Subsubsection
+Crowd Control Aid
+\end_layout
+
+\begin_layout Paragraph
+A peaceful protest ensues as citizens rally against a law recently passed
+ by the city.
+ As more people begin to gather, the city’s crowd control team begins to
+ monitor their walk across multiple streets.
+ Icarus is launched, with camera placed at each intersection of interest.
+ The system frequently collects instances of crowd movement, and after analyzati
+on, displays the results on the server for all team members to view.
+ After review of data retrieved, the crowd control team notices that the
+ people are slowing down turning right on the street through their route.
+ The team is then able to send members to that location in order to file
+ them out in a more organized manner, in turn successfully migrating the
+ crowd, and avoiding collateral damage.
+\end_layout
+
+\begin_layout Subsubsection
+Automated Crowd Control System
+\end_layout
+
+\begin_layout Paragraph
+A concert is set to take place in a busy part of the city.
+ Hundreds of people have lined up, and have just check their tickets in
+ at the entrance.
+ A crowd develops as everyone approaches the door to the musical hallway.
+ Icarus has already been set up to analyze the approaching crowd, and begins
+ scanning people, grouping them into grouped sections based on the area
+ they have taken up.
+ The area is most likely entirely filled during the beginning, but as crowd
+ begins to file through, Icarus is consistently searching for congested
+ parts of the crowd.
+ The system already holds a map of the entrance, and has a calculated route
+ that would serve as the most efficient way to walk the crowd through the
+ doors.
+ It signals to individual sides of the crowd to adjust their speed (or direction
+ if need be), therefore allowing other sections of the crowd to pass through
+ easily and quickly.
+\end_layout
+
+\begin_layout Subsection
+Facilitated VS Un-Facilitated Funneling
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/g1.png
+	lyxscale 50
+	scale 40
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename C:/Users/btl78/OneDrive/Pictures/g2.png
+	lyxscale 50
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Figure 8
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Paragraph
+By analyzing the properties of a crowd and identifying congestion points,
+ project Icarus can now reform crowd management.
+ By efficiently scanning the proximity, planning an optimal route, and deliverin
+g signals for people to follow, Stampedes, congestion, and traffic can now
+ be prevented.
+ With project Icarus capable of functioning as an individual unit, or as
+ an aid for a crowd control team, this device will always be a supplement
+ to making crowds safer and faster to travel in.
+\end_layout
+
+\begin_layout Part*
+References
+\end_layout
+
+\begin_layout Enumerate
+http://www.huffingtonpost.com/entry/hajj-stampede-death-toll_us_5625d226e4b0bce347
+020aa1
+\end_layout
+
+\begin_layout Enumerate
+http://www.cnn.com/2015/09/25/middleeast/hajj-pilgrimage-stampede/ 
+\end_layout
+
+\end_body
+\end_document
