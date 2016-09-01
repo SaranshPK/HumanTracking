@@ -165,11 +165,9 @@ def fillAll(x, y):
 
 
 def checkValid(x,y):
-    if(x < image.size[0]) and (y < image.size[1] and (x >= 0) and (y >= 0)):
-        if pixdata[x, y][0] + pixdata[x, y][1] + pixdata[x, y][2] > 350:
-            return True
-        else:
-            return False
+    if(x < image.size[0]) and (y < image.size[1] and (x >= 0) and (y >= 0)) and
+        pixdata[x, y][0] + pixdata[x, y][1] + pixdata[x, y][2] > 350:
+        return True
     else:
         return False
 
